@@ -23,15 +23,21 @@ export function useBaseRate(defaultValue: number = 35) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEYS.BASE_RATE).then((saved) => {
-      if (saved) {
-        const parsed = parseFloat(saved);
-        if (!isNaN(parsed) && parsed > 0) {
-          setBaseRateState(parsed);
+    AsyncStorage.getItem(STORAGE_KEYS.BASE_RATE)
+      .then((saved) => {
+        if (saved) {
+          const parsed = parseFloat(saved);
+          if (!isNaN(parsed) && parsed > 0) {
+            setBaseRateState(parsed);
+          }
         }
-      }
-      setIsLoaded(true);
-    });
+      })
+      .catch(() => {
+        // Storage error, use default
+      })
+      .finally(() => {
+        setIsLoaded(true);
+      });
   }, []);
 
   const setBaseRate = useCallback((rate: number) => {
@@ -50,12 +56,18 @@ export function useWorkState(defaultValue: USState = 'FL') {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEYS.STATE).then((saved) => {
-      if (saved) {
-        setStateValue(saved as USState);
-      }
-      setIsLoaded(true);
-    });
+    AsyncStorage.getItem(STORAGE_KEYS.STATE)
+      .then((saved) => {
+        if (saved) {
+          setStateValue(saved as USState);
+        }
+      })
+      .catch(() => {
+        // Storage error, use default
+      })
+      .finally(() => {
+        setIsLoaded(true);
+      });
   }, []);
 
   const setState = useCallback((newState: USState) => {
@@ -74,15 +86,21 @@ export function useWeeklyHours(defaultValue: number = 36) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEYS.WEEKLY_HOURS).then((saved) => {
-      if (saved) {
-        const parsed = parseInt(saved, 10);
-        if (!isNaN(parsed) && parsed >= 0) {
-          setWeeklyHoursState(parsed);
+    AsyncStorage.getItem(STORAGE_KEYS.WEEKLY_HOURS)
+      .then((saved) => {
+        if (saved) {
+          const parsed = parseInt(saved, 10);
+          if (!isNaN(parsed) && parsed >= 0) {
+            setWeeklyHoursState(parsed);
+          }
         }
-      }
-      setIsLoaded(true);
-    });
+      })
+      .catch(() => {
+        // Storage error, use default
+      })
+      .finally(() => {
+        setIsLoaded(true);
+      });
   }, []);
 
   const setWeeklyHours = useCallback((hours: number) => {
@@ -101,19 +119,25 @@ export function usePresets() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEYS.PRESETS).then((saved) => {
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            setPresetsState(parsed);
+    AsyncStorage.getItem(STORAGE_KEYS.PRESETS)
+      .then((saved) => {
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+              setPresetsState(parsed);
+            }
+          } catch {
+            // Invalid JSON, ignore
           }
-        } catch {
-          // Invalid JSON, ignore
         }
-      }
-      setIsLoaded(true);
-    });
+      })
+      .catch(() => {
+        // Storage error, use default
+      })
+      .finally(() => {
+        setIsLoaded(true);
+      });
   }, []);
 
   const savePresets = useCallback((newPresets: FacilityPreset[]) => {
