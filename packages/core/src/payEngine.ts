@@ -107,7 +107,7 @@ export function calculateGrossPay(
   const diffPerHour = calculateDiffPerHour(diffs, rates);
   const effectiveRate = baseRate + diffPerHour;
 
-  const { regularHours, overtimeHours } = calculateOvertimeHours(shiftHours, weeklyHours);
+  const { overtimeHours } = calculateOvertimeHours(shiftHours, weeklyHours);
 
   // Base pay (base rate only, regular hours)
   const basePay = baseRate * shiftHours;
